@@ -1,0 +1,1036 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="보리 영어">
+</head>
+<body>
+<title>보리랑 영어 공책</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Gaegu:wght@700&family=Gowun+Dodum&display=swap">
+<style>
+/* Layout: one phone-width notebook column; every screen = one sheet of paper with one big next-step button. */
+:root{
+  --paper:#FBF7EF; --sheet:#FFFDF8; --ink:#2B2A33; --pencil:#6B6870; --line:#D9D2C3;
+  --tomato:#E4572E; --sky:#3A86C8; --leaf:#4C9A5B; --sun:#F2B134; --peach:#F6D5C8;
+  --tape:rgba(242,177,52,.35); --sky-soft:rgba(58,134,200,.12); --leaf-soft:rgba(76,154,91,.14);
+  --f-en:"Andika","Comic Neue","Trebuchet MS",sans-serif;
+  --f-ko:"Gowun Dodum","Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  --f-hand:"Gaegu","Gowun Dodum","Apple SD Gothic Neo",sans-serif;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-ko);font-size:17px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px;
+  -webkit-tap-highlight-color:transparent}
+#app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.en{font-family:var(--f-en)}
+.hand{font-family:var(--f-hand);font-weight:700}
+h1,h2,h3{margin:0;text-wrap:balance}
+h1{font-family:var(--f-hand);font-size:32px;line-height:1.15}
+h2{font-family:var(--f-hand);font-size:26px;line-height:1.2}
+h3{font-size:17px}
+p{margin:0}
+.muted{color:var(--pencil)}
+.small{font-size:14px}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--sky);outline-offset:2px}
+.sheet{background:var(--sheet);border:1.5px solid var(--line);border-radius:6px;padding:18px;position:relative}
+.sheet.tape::before{content:"";position:absolute;top:-10px;left:22px;width:64px;height:20px;background:var(--tape);transform:rotate(-4deg);border-radius:2px}
+.tilt{transform:rotate(-1deg)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.col{display:flex;flex-direction:column;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{min-height:56px;padding:12px 20px;border-radius:14px;font-size:18px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:2px solid var(--ink);background:var(--sheet);transition:transform .12s}
+.btn:active{transform:translateY(2px)}
+.btn.primary{background:var(--tomato);border-color:var(--tomato);color:#fff}
+.btn.sound{background:var(--sky-soft);border-color:var(--sky);color:var(--ink)}
+.btn.block{width:100%}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.link{color:var(--pencil);text-decoration:underline;text-underline-offset:3px;font-size:15px;padding:8px}
+.tile{min-height:52px;padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--sheet);text-align:left;display:flex;align-items:center;gap:10px}
+.tile:active{background:var(--paper)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}
+.chip{flex:none;min-height:40px;padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--sheet);font-family:var(--f-en);font-size:16px}
+.chip.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+/* header bar inside an activity */
+.topbar{display:flex;align-items:center;gap:12px}
+.close{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);font-size:22px;line-height:1;flex:none}
+.string{flex:1;height:22px;position:relative;display:flex;align-items:center;justify-content:space-between;min-width:0}
+.string::before{content:"";position:absolute;left:0;right:0;top:50%;border-top:1.5px solid var(--pencil)}
+.bead{position:relative;width:14px;height:14px;border-radius:50%;background:var(--paper);border:1.5px solid var(--pencil)}
+.bead.on{background:var(--tomato);border-color:var(--tomato)}
+/* word card */
+.wordcard{padding:22px 18px 26px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.pic{font-size:84px;line-height:1.1;height:96px;display:flex;align-items:center}
+.word{font-family:var(--f-en);font-size:46px;font-weight:700;line-height:1.1;word-break:break-word}
+.ko{font-size:19px;color:var(--pencil)}
+.ex{font-family:var(--f-en);font-size:21px}
+/* four-line notebook */
+.lines4{position:relative;height:84px;margin:6px 0;background:
+  linear-gradient(var(--line),var(--line)) 0 14px/100% 1.5px no-repeat,
+  repeating-linear-gradient(90deg,var(--line) 0 6px,transparent 6px 11px) 0 34px/100% 1.5px no-repeat,
+  linear-gradient(var(--tomato),var(--tomato)) 0 54px/100% 1.5px no-repeat,
+  linear-gradient(var(--line),var(--line)) 0 74px/100% 1.5px no-repeat;display:flex;justify-content:center;gap:4px;align-items:flex-start}
+.slot{width:34px;height:84px;font-family:var(--f-en);font-size:46px;line-height:1;padding-top:12px;text-align:center}
+.slot.empty::after{content:"";display:block;width:24px;margin:44px auto 0;border-bottom:2px solid var(--pencil)}
+.letters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.letter{width:52px;height:56px;border-radius:10px;border:1.5px solid var(--ink);background:var(--sheet);font-family:var(--f-en);font-size:28px}
+.letter.used{opacity:.25;pointer-events:none}
+/* sentence tiles */
+.built{min-height:64px;border-bottom:2px solid var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 0}
+.wtile{min-height:48px;padding:6px 14px;border-radius:10px;border:1.5px solid var(--ink);background:var(--sheet);font-family:var(--f-en);font-size:22px}
+.wtile.used{opacity:.25;pointer-events:none}
+.slotword{display:inline-block;padding:0 8px;border-bottom:3px solid var(--tomato);color:var(--tomato)}
+/* bubbles */
+.scene{font-size:64px;text-align:center;padding:10px;border:1.5px dashed var(--line);border-radius:10px}
+.bubble{max-width:86%;padding:10px 14px;border-radius:16px;border:1.5px solid var(--line);background:var(--sheet)}
+.bubble .en{font-size:21px}
+.bubble.me{align-self:flex-end;border-color:var(--sky);background:var(--sky-soft)}
+.bubble.now{border-color:var(--tomato);border-width:2px}
+.who{font-size:13px;color:var(--pencil)}
+/* stamp feedback */
+.stamp{position:fixed;left:50%;top:38%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;border:6px solid var(--leaf);color:var(--leaf);display:flex;align-items:center;justify-content:center;font-family:var(--f-hand);font-size:30px;transform:rotate(-12deg);background:rgba(255,253,248,.85);pointer-events:none;z-index:20;animation:stamp .18s ease-out}
+.stamp.again{border-color:var(--tomato);color:var(--tomato);border-radius:18px;font-size:26px}
+@keyframes stamp{from{transform:rotate(-12deg) scale(1.35);opacity:.3}to{transform:rotate(-12deg) scale(1);opacity:1}}
+.opt-ok{border-color:var(--leaf)!important;background:var(--leaf-soft)!important}
+.opt-no{border-color:var(--tomato)!important;background:var(--peach)!important}
+/* stickers */
+.stickers{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:12px}
+.sticker{aspect-ratio:1;max-width:100%;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:2px dashed var(--line);color:var(--line);font-family:var(--f-en);font-size:13px;text-align:center;padding:6px}
+.sticker .s-pic{font-size:30px;line-height:1.1}
+.sticker.got{border:2px solid var(--ink);color:var(--ink);background:var(--sheet);transform:rotate(-3deg)}
+.sticker.gold{border:3px solid var(--sun);box-shadow:0 0 0 4px rgba(242,177,52,.25)}
+.week{display:flex;justify-content:space-between;gap:6px}
+.day{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:13px;color:var(--pencil)}
+.day .b{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--pencil);background:var(--paper)}
+.day .b.on{background:var(--tomato);border-color:var(--tomato)}
+.day.today{color:var(--ink);font-weight:700}
+.task{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.task:last-child{border-bottom:0}
+.check{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--pencil);flex:none;display:flex;align-items:center;justify-content:center;color:var(--leaf);font-weight:700}
+.check.on{border:2.5px solid var(--leaf)}
+.bori-say{display:flex;gap:10px;align-items:flex-end}
+.bori-say svg{width:96px;flex:none}
+.say{position:relative;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:var(--sheet);min-width:0}
+.star{color:var(--sun)}
+.stars{font-size:40px;letter-spacing:4px}
+/* parent */
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto;width:100%}
+.keypad button{height:60px;border-radius:12px;border:1.5px solid var(--line);background:var(--sheet);font-size:24px}
+.pinbox{display:flex;gap:12px;justify-content:center;font-size:30px}
+.pinbox span{width:20px;height:20px;border-radius:50%;border:2px solid var(--ink)}
+.pinbox span.f{background:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{color:var(--pencil);font-weight:400;font-size:13px}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+.bars{display:flex;align-items:flex-end;gap:8px;height:110px;padding-top:8px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;font-size:12px;color:var(--pencil);height:100%}
+.bar i{display:block;width:100%;max-width:34px;background:var(--sky);border-radius:4px 4px 0 0;min-height:2px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--sheet);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{min-height:120px;font-family:var(--f-en)}
+label{font-size:14px;color:var(--pencil);display:flex;flex-direction:column;gap:4px}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:16px;color:var(--ink)}
+.toggle input{width:26px;height:26px;flex:none}
+.note{font-size:14px;color:var(--pencil);background:var(--paper);border-radius:8px;padding:10px 12px}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div id="app" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ───────── 교과서 데이터: YBM 초등학교 영어 3 (김혜리, 2022 개정) ─────────
+   words: [영어, 뜻, 그림(없으면 ""), 예문]  — 그림이 없는 단어는 문장 속에서 익히는 단어 */
+const LESSONS = [
+ {id:"L1",title:"Hello! (인사·자기소개)",theme:"👋",key:"Hello, I'm ___.",
+  words:[["hello","안녕","👋","Hello, everyone!"],["goodbye","잘 가","🖐️","Goodbye, Bori!"],["I","나","🙋","I'm Elly."],["you","너","👉","Nice to meet you."],["name","이름","📛","What's your name?"],["meet","만나다","🤝","Nice to meet you."],["nice","좋은, 반가운","😊","Nice to meet you."],["everyone","모두, 여러분","🧑‍🤝‍🧑","Hello, everyone!"],["be","~이다, 있다","","I am Teeny."],["too","~도 또한","","Nice to meet you, too."],["what","무엇","","What's your name?"]],
+  ext:[["friend","친구","🧒"],["teacher","선생님","🧑‍🏫"],["classmate","반 친구","🏫"]],
+  pats:[{t:"Hello, I'm ___.",ko:"안녕, 나는 ___야.",s:["Elly","Teeny","Bori"]}],
+  sents:[{t:"What's your name?",ko:"너는 이름이 뭐니?"},{t:"Nice to meet you.",ko:"만나서 반가워."},{t:"Nice to meet you, too.",ko:"나도 만나서 반가워."},{t:"Goodbye, everyone!",ko:"모두 잘 가!"}],
+  dlg:[["B","Hello! I'm Bori. What's your name?","안녕! 나는 보리야. 너는 이름이 뭐니?"],["M","Hello! I'm {me}.","안녕! 나는 {me}야."],["B","Nice to meet you.","만나서 반가워."],["M","Nice to meet you, too.","나도 만나서 반가워."],["B","Goodbye!","잘 가!"],["M","Goodbye!","잘 가!"]]},
+ {id:"L2",title:"Please! (요청하기)",theme:"🚪",key:"Open the door, please.",
+  words:[["open","열다","📖","Open the door, please."],["close","닫다","📕","Close the window, please."],["door","문","🚪","Open the door, please."],["window","창문","🪟","Close the window, please."],["sit","앉다","🪑","Sit down, please."],["stand","서다","🧍","Stand up, please."],["up","위로","⬆️","Stand up, please."],["down","아래로","⬇️","Sit down, please."],["please","제발, ~해 주세요","🙏","Sit down, please."],["thank","감사하다","💐","Thank you."],["welcome","환영하다","🤗","You're welcome."],["okay","네, 좋아","👌","Okay!"],["no","아니, 안 돼","🙅","No, thank you."],["great","아주 좋은, 멋진","👍","Great!"],["the","그","","Open the door."]],
+  ext:[["desk","책상","🗄️"],["chair","의자","🪑"],["sorry","미안해","🙇"]],
+  pats:[{t:"___ the door, please.",ko:"문을 ___ 주세요.",s:["Open","Close"]},{t:"___ the window, please.",ko:"창문을 ___ 주세요.",s:["Close","Open"]}],
+  sents:[{t:"Sit down, please.",ko:"앉아 주세요."},{t:"Stand up, please.",ko:"일어서 주세요."},{t:"Thank you.",ko:"고마워."},{t:"You're welcome.",ko:"천만에."}],
+  dlg:[["B","Open the door, please.","문을 열어 줘."],["M","Okay.","응."],["B","Thank you.","고마워."],["M","You're welcome.","천만에."],["B","Sit down, please.","앉아 줘."],["M","Okay! Great!","좋아! 멋져!"]]},
+ {id:"L3",title:"What's This? (물건 이름)",theme:"🎒",key:"What's this? It's a ___.",
+  words:[["bag","가방","🎒","It's a bag."],["ball","공","⚽","It's a ball."],["book","책","📘","It's a book."],["clock","시계","⏰","What's that? It's a clock."],["doll","인형","🪆","It's a doll."],["hat","모자","👒","It's a hat."],["pencil","연필","✏️","It's a pencil."],["violin","바이올린","🎻","It's a violin."],["look","보다","👀","Look! It's a ball."],["help","돕다","🤲","Help me, please."],["this","이것","","What's this?"],["that","저것","","What's that?"],["it","그것","","It's a book."],["a","하나의","","It's a hat."]],
+  ext:[["cup","컵","🥤"],["box","상자","📦"],["umbrella","우산","☂️"]],
+  pats:[{t:"It's a ___.",ko:"그것은 ___이야.",s:["bag","ball","book","clock","doll","hat","pencil","violin"]}],
+  sents:[{t:"What's this?",ko:"이것은 뭐니?"},{t:"What's that?",ko:"저것은 뭐니?"},{t:"Look! It's a ball.",ko:"봐! 공이야."}],
+  dlg:[["M","What's this?","이건 뭐야?"],["B","It's a violin.","바이올린이야."],["M","Wow, great! What's that?","와, 멋지다! 저건 뭐야?"],["B","It's a clock.","시계야."],["M","Look! It's a ball.","봐! 공이야."]]},
+ {id:"L4",title:"Do You Like Pizza? (좋아하는 음식)",theme:"🍕",key:"Do you like ___?",
+  words:[["apple","사과","🍎","I like apples."],["candy","사탕","🍬","Do you like candy?"],["chicken","치킨","🍗","I like chicken."],["cookie","쿠키","🍪","Do you like cookies?"],["ice cream","아이스크림","🍦","I like ice cream."],["kiwi","키위","🥝","Do you like kiwis?"],["milk","우유","🥛","I like milk."],["pizza","피자","🍕","Do you like pizza?"],["salad","샐러드","🥗","I don't like salad."],["vegetable","채소","🥦","I like vegetables."],["like","좋아하다","❤️","I like pizza."],["good","좋은","👍","Good!"],["yes","네","🙆","Yes, I do."],["do","(묻거나 부정할 때)","","Do you like milk?"],["not","아닌","","No, I don't."]],
+  ext:[["rice","밥","🍚"],["bread","빵","🍞"],["egg","달걀","🥚"],["banana","바나나","🍌"]],
+  pats:[{t:"Do you like ___?",ko:"너는 ___ 좋아하니?",s:["pizza","apples","candy","cookies","salad","milk"]},{t:"I like ___.",ko:"나는 ___ 좋아해.",s:["chicken","ice cream","kiwis","vegetables"]}],
+  sents:[{t:"Yes, I do.",ko:"응, 좋아해."},{t:"No, I don't.",ko:"아니, 안 좋아해."}],
+  dlg:[["B","Do you like pizza?","너 피자 좋아해?"],["M","Yes, I do. Do you like salad?","응, 좋아해. 너는 샐러드 좋아해?"],["B","No, I don't. I like cookies.","아니. 나는 쿠키가 좋아."],["M","I like cookies, too!","나도 쿠키 좋아!"]]},
+ {id:"L5",title:"How Many? (동물과 수)",theme:"🦓",key:"How many ___?",
+  words:[["cat","고양이","🐱","How many cats?"],["dog","개","🐶","Two dogs."],["pig","돼지","🐷","Three pigs."],["tiger","호랑이","🐯","How many tigers?"],["zebra","얼룩말","🦓","Four zebras."],["kangaroo","캥거루","🦘","It's a kangaroo."],["zoo","동물원","🏞️","Look! It's a zoo."],["big","큰","🐘","It's big."],["small","작은","🐭","It's small."],["one","하나, 1","1️⃣","One cat."],["two","둘, 2","2️⃣","Two dogs."],["three","셋, 3","3️⃣","Three pigs."],["four","넷, 4","4️⃣","Four tigers."],["five","다섯, 5","5️⃣","Five zebras."],["how","어떻게, 얼마나","","How many dogs?"],["many","많은","","How many cats?"]],
+  ext:[["lion","사자","🦁"],["monkey","원숭이","🐒"],["rabbit","토끼","🐰"],["bear","곰","🐻"]],
+  pats:[{t:"How many ___?",ko:"___ 몇 마리야?",s:["cats","dogs","pigs","tigers","zebras"]},{t:"___ tigers.",ko:"호랑이 ___ 마리.",s:["Two","Three","Four","Five"]}],
+  sents:[{t:"It's big.",ko:"그것은 커."},{t:"It's small.",ko:"그것은 작아."}],
+  dlg:[["B","Look! It's a zoo.","봐! 동물원이야."],["M","How many tigers?","호랑이 몇 마리야?"],["B","Two tigers.","호랑이 두 마리."],["M","How many zebras?","얼룩말은 몇 마리야?"],["B","Three zebras.","얼룩말 세 마리."],["M","Wow, it's big!","와, 크다!"]]},
+ {id:"L6",title:"Can You Swim? (할 수 있는 것)",theme:"🏊",key:"Can you ___?",
+  words:[["swim","수영하다","🏊","Can you swim?"],["skate","스케이트를 타다","⛸️","Can you skate?"],["dance","춤추다","💃","I can dance."],["jump","점프하다","🤸","Can you jump?"],["run","달리다","🏃","I can run."],["walk","걷다","🚶","Let's walk."],["fly","날다","🕊️","A bird can fly."],["bird","새","🐦","It's a bird."],["foot","발","🦶","My foot!"],["fun","재미있는","😆","It's fun!"],["come","오다","🫴","Come here."],["here","여기에","📍","Come here."],["can","~할 수 있다","","Yes, I can."]],
+  ext:[["sing","노래하다","🎤"],["ride","타다","🚲"],["climb","오르다","🧗"],["kick","차다","🦵"]],
+  pats:[{t:"Can you ___?",ko:"너는 ___ 수 있니?",s:["swim","skate","dance","jump","run","fly"]}],
+  sents:[{t:"Yes, I can.",ko:"응, 할 수 있어."},{t:"No, I can't.",ko:"아니, 못 해."},{t:"Come here.",ko:"이리 와."},{t:"It's fun!",ko:"재미있어!"}],
+  dlg:[["B","Can you swim?","너 수영할 수 있어?"],["M","Yes, I can. Can you skate?","응, 할 수 있어. 너는 스케이트 탈 수 있어?"],["B","No, I can't.","아니, 못 타."],["M","Come here. It's fun!","이리 와. 재미있어!"],["B","Great!","좋아!"]]},
+ {id:"L7",title:"What Color Is It?",theme:"🎨",key:"What color is it?",
+  words:[["red","빨간색","🔴","It's red."],["blue","파란색","🔵","It's blue."],["green","초록색","🟢","It's green."],["yellow","노란색","🟡","It's yellow."],["orange","주황색","🟠","It's orange."],["pink","분홍색","🩷","It's pink."],["color","색깔","🎨","What color is it?"],["car","차","🚗","It's a blue car."],["flower","꽃","🌸","It's a pink flower."],["pretty","예쁜","🎀","It's pretty."],["know","알다","💡","I know!"],["right","옳은","✅","You're right."],["now","지금","","Look at it now."],["at","~에(서)","","Look at the car."],["and","그리고","","Red and blue."]],
+  ext:[["purple","보라색","🟣"],["black","검은색","⚫"],["white","흰색","⚪"],["brown","갈색","🟤"]],
+  pats:[{t:"It's ___.",ko:"그것은 ___이야.",s:["red","blue","green","yellow","orange","pink"]}],
+  sents:[{t:"What color is it?",ko:"그것은 무슨 색이니?"},{t:"You're right.",ko:"네 말이 맞아."},{t:"It's pretty.",ko:"그것은 예뻐."}],
+  dlg:[["M","What color is it?","그건 무슨 색이야?"],["B","It's pink.","분홍색이야."],["M","It's pretty! What color is the car?","예쁘다! 차는 무슨 색이야?"],["B","It's blue.","파란색이야."],["M","You're right!","맞아!"]]},
+ {id:"L8",title:"Do You Have a Ruler?",theme:"✂️",key:"Do you have ___?",
+  words:[["ruler","자","📏","Do you have a ruler?"],["crayons","크레용","🖍️","Do you have crayons?"],["eraser","지우개","","Do you have an eraser?"],["glue stick","막대 풀","","I have a glue stick."],["notebook","공책","📓","It's my notebook."],["pen","펜","🖊️","Do you have a pen?"],["scissors","가위","✂️","I have scissors."],["doughnut","도넛","🍩","I love doughnuts."],["have","가지다","🤲","I have a pen."],["love","사랑하다","💕","I love it."],["long","긴","","It's long."],["any","어떤, 아무것도","","Do you have any crayons?"]],
+  ext:[["marker","마커","🖊️"],["sticker","스티커","🏷️"],["tape","테이프","🧻"]],
+  pats:[{t:"Do you have ___?",ko:"너 ___ 있니?",s:["a ruler","a pen","an eraser","crayons","scissors","a notebook"]}],
+  sents:[{t:"Yes, I do. Here.",ko:"응, 있어. 여기."},{t:"No, I don't.",ko:"아니, 없어."},{t:"I love it.",ko:"정말 좋아."}],
+  dlg:[["B","Do you have a ruler?","너 자 있어?"],["M","Yes, I do. Here.","응, 있어. 여기."],["B","Thank you. Do you have crayons?","고마워. 크레용도 있어?"],["M","No, I don't.","아니, 없어."],["B","Okay.","알았어."]]},
+ {id:"L9",title:"How Old Are You?",theme:"🎂",key:"How old are you?",
+  words:[["birthday","생일","🎂","Happy birthday!"],["happy","행복한","😄","Happy birthday!"],["eat","먹다","🍽️","Let's eat."],["play","놀다","🧸","Let's play."],["menu","메뉴","📋","Look at the menu."],["year","해, 나이","📅","I'm nine years old."],["six","여섯, 6","6️⃣","I'm six."],["seven","일곱, 7","7️⃣","I'm seven."],["eight","여덟, 8","8️⃣","I'm eight years old."],["nine","아홉, 9","9️⃣","I'm nine years old."],["ten","열, 10","🔟","I'm ten years old."],["old","나이가 ~인","","How old are you?"],["in","안에","","Come in."]],
+  ext:[["cake","케이크","🍰"],["gift","선물","🎁"],["party","파티","🥳"],["candle","초","🕯️"]],
+  pats:[{t:"I'm ___ years old.",ko:"나는 ___ 살이야.",s:["nine","eight","ten"]}],
+  sents:[{t:"How old are you?",ko:"너는 몇 살이니?"},{t:"Happy birthday!",ko:"생일 축하해!"},{t:"Come in.",ko:"들어와."}],
+  dlg:[["B","Happy birthday!","생일 축하해!"],["M","Thank you!","고마워!"],["B","How old are you?","너는 몇 살이야?"],["M","I'm nine years old. How old are you?","나는 아홉 살이야. 너는 몇 살이야?"],["B","I'm ten. Let's eat!","나는 열 살. 먹자!"]]},
+ {id:"L10",title:"He's My Dad",theme:"👨‍👩‍👧",key:"Who is he? He's my ___.",
+  words:[["dad","아빠","👨","He's my dad."],["mom","엄마","👩","She's my mom."],["brother","형, 오빠, 남동생","👦","He's my brother."],["sister","언니, 누나, 여동생","👧","She's my sister."],["grandfather","할아버지","👴","He's my grandfather."],["grandmother","할머니","👵","She's my grandmother."],["tall","키가 큰","🦒","He's tall."],["beautiful","아름다운","🌹","She's beautiful."],["show","공연, 쇼","🎭","It's a show."],["he","그","","Who is he?"],["she","그녀","","Who is she?"],["who","누구","","Who is he?"],["well","잘","","You dance well."]],
+  ext:[["baby","아기","👶"],["uncle","삼촌","🧔"],["aunt","이모, 고모","👩‍🦰"],["cousin","사촌","🧒"]],
+  pats:[{t:"He's my ___.",ko:"그는 나의 ___야.",s:["dad","brother","grandfather"]},{t:"She's my ___.",ko:"그녀는 나의 ___야.",s:["mom","sister","grandmother"]}],
+  sents:[{t:"Who is he?",ko:"그는 누구니?"},{t:"Who is she?",ko:"그녀는 누구니?"},{t:"He's tall.",ko:"그는 키가 커."}],
+  dlg:[["B","Who is he?","저분은 누구야?"],["M","He's my dad.","우리 아빠야."],["B","He's tall. Who is she?","키가 크시다. 저분은 누구야?"],["M","She's my mom.","우리 엄마야."],["B","She's beautiful!","아름다우시다!"]]},
+ {id:"L11",title:"How's the Weather?",theme:"🌤️",key:"How's the weather?",
+  words:[["sunny","맑은","☀️","It's sunny."],["cloudy","흐린","☁️","It's cloudy."],["windy","바람 부는","🌬️","It's windy."],["raining","비가 오는","🌧️","It's raining."],["snowing","눈이 오는","🌨️","It's snowing."],["hot","더운","🥵","It's hot."],["cold","추운","🥶","It's cold."],["weather","날씨","🌤️","How's the weather?"],["outside","밖에","🏡","Let's go outside."],["see","보다","👀","See you!"],["go","가다","","Let's go."],["let's","~하자","","Let's play outside."]],
+  ext:[["umbrella","우산","☂️"],["coat","외투","🧥"],["rainbow","무지개","🌈"],["warm","따뜻한","🧣"]],
+  pats:[{t:"It's ___.",ko:"날씨가 ___.",s:["sunny","cloudy","windy","cold","hot"]}],
+  sents:[{t:"How's the weather?",ko:"날씨가 어때?"},{t:"It's raining.",ko:"비가 와."},{t:"Let's go outside.",ko:"밖에 나가자."}],
+  dlg:[["B","How's the weather?","날씨 어때?"],["M","It's sunny.","맑아."],["B","Let's go outside!","밖에 나가자!"],["M","Okay! Oh, it's windy.","좋아! 앗, 바람 분다."],["B","It's cold, too.","춥기도 하다."]]}
+];
+
+const TOPICS = {L1:"인사", L2:"부탁하기", L3:"물건 이름", L4:"좋아하는 음식", L5:"동물 세기", L6:"할 수 있는 것", L7:"색깔", L8:"학용품", L9:"생일과 나이", L10:"가족", L11:"날씨"};
+LESSONS.forEach(l => l.topic = TOPICS[l.id]);
+const ACTS = [
+ {id:"cards",name:"단어 카드",mod:"단어",info:"듣고 따라 말하기"},
+ {id:"match",name:"듣고 고르기",mod:"단어",info:"소리 듣고 뜻 고르기"},
+ {id:"spell",name:"철자 쓰기",mod:"단어",info:"4선 공책에 글자 놓기"},
+ {id:"pattern",name:"문장 바꿔 끼우기",mod:"문장",info:"단어를 바꾸며 문장 듣기"},
+ {id:"order",name:"순서 퍼즐",mod:"문장",info:"단어 카드로 문장 만들기"},
+ {id:"listen",name:"대화 듣기",mod:"회화",info:"보리와의 대화 듣기"},
+ {id:"role",name:"역할 놀이",mod:"회화",info:"내 차례에 말하기"},
+ {id:"chat",name:"보리랑 이야기",mod:"회화",info:"보리에게 대답 고르기"},
+ {id:"test",name:"단원 테스트",mod:"확인",info:"14문제, 80점이면 통과"}
+];
+const TEST_ACTS = ["cards","match","spell","test"];
+const INTERVAL = {1:1,2:2,3:4,4:7,5:14};
+const WD = ["일","월","화","수","목","금","토"];
+
+/* ───────── 작은 도구들 ───────── */
+const $ = s => document.querySelector(s);
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const k in attrs){
+    const v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else if (k === "html") el.innerHTML = v;
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat()){
+    if (kid == null || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pad = n => String(n).padStart(2, "0");
+const dstr = d => d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+const today = () => dstr(new Date());
+const addDays = (s, n) => { const [y, m, d] = s.split("-").map(Number); return dstr(new Date(y, m - 1, d + n)); };
+const fill = (s, me) => s.replace(/\{me\}/g, me);
+
+/* ───────── 소리 ───────── */
+let voice = null;
+function pickVoice(){
+  if (!("speechSynthesis" in window)) return;
+  const vs = speechSynthesis.getVoices().filter(v => /^en[-_]US/i.test(v.lang));
+  voice = vs.find(v => /Samantha|Allison|Ava|Google US English/i.test(v.name)) || vs[0] || null;
+}
+if ("speechSynthesis" in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function speak(text, slow){
+  if (!("speechSynthesis" in window)) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/___/g, "blank"));
+    u.lang = "en-US"; if (voice) u.voice = voice;
+    u.rate = slow ? 0.7 : 0.88; u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+let actx = null;
+function sfx(kind){
+  try{
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+    if (kind === "stamp"){ o.type = "sine"; o.frequency.setValueAtTime(150, t); o.frequency.exponentialRampToValueAtTime(70, t + .12); g.gain.setValueAtTime(.35, t); g.gain.exponentialRampToValueAtTime(.001, t + .16); }
+    else { o.type = "triangle"; o.frequency.setValueAtTime(660, t); o.frequency.exponentialRampToValueAtTime(990, t + .06); g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + .12); }
+    o.connect(g).connect(actx.destination); o.start(t); o.stop(t + .2);
+  }catch(e){}
+}
+function showStamp(ok){
+  const s = h("div", {class:"stamp" + (ok ? "" : " again"), "aria-hidden":"true"}, ok ? "잘했어" : "다시 한 번");
+  document.body.append(s); sfx("stamp");
+  setTimeout(() => s.remove(), ok ? 650 : 900);
+}
+
+/* ───────── 저장 (기기 + 클로드 계정 동기화) ───────── */
+const LS_KEY = "bori-english-v1";
+function freshState(){
+  return {v:1, updated:0, name:"", lesson:"L8", seeded:false, done:{}, boxes:{}, days:{}, stars:0,
+          tests:[], custom:[], settings:{pin:"", ai:true}};
+}
+let S = freshState();
+try{ const raw = localStorage.getItem(LS_KEY); if (raw) S = Object.assign(freshState(), JSON.parse(raw)); }catch(e){}
+let dbRef = null, syncTimer = null;
+function save(){
+  S.updated = Date.now();
+  const json = JSON.stringify(S);
+  try{ localStorage.setItem(LS_KEY, json); }catch(e){}
+  if (dbRef){ clearTimeout(syncTimer); syncTimer = setTimeout(() => { dbRef.set({state:json, updated:S.updated}).catch(() => {}); }, 1500); }
+}
+async function initSync(){
+  if (!window.claude || !window.claude.use) return;
+  try{
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db || !user) return;
+    const id = await user.id(); if (!id) return;
+    dbRef = db.doc("data/users/" + id + "/english");
+    const snap = await dbRef.get();
+    if (snap.exists){
+      const d = snap.data();
+      if (d && d.updated > S.updated){ S = Object.assign(freshState(), JSON.parse(d.state)); try{ localStorage.setItem(LS_KEY, d.state); }catch(e){} route(currentView); return; }
+    }
+    save();
+  }catch(e){ dbRef = null; }
+}
+
+/* ───────── 단원·문장·복습 상자 ───────── */
+function customLesson(){
+  if (!S.custom.length) return null;
+  return {id:"T", title:"시험 대비 단어", theme:"📝", key:"학교 시험 단어", custom:true,
+    words:S.custom.map(w => [w.en, w.ko, "", ""]), ext:[], pats:[], sents:[], dlg:[]};
+}
+const allLessons = () => { const c = customLesson(); return c ? LESSONS.concat([c]) : LESSONS; };
+const lessonById = id => allLessons().find(l => l.id === id) || LESSONS[0];
+function sentencesOf(L){
+  return L.pats.map(p => ({t:p.t.replace("___", p.s[0]), ko:p.ko.replace("___", koSlot(L, p.s[0]))})).concat(L.sents);
+}
+function koSlot(L, en){ const w = L.words.find(w => en.toLowerCase().includes(w[0].toLowerCase())); return w ? w[1].split(",")[0] : en; }
+const wordKey = (L, w) => "w:" + L.id + ":" + w[0];
+const sentKey = (L, i) => "s:" + L.id + ":" + i;
+function findItem(key){
+  const [type, lid, rest] = [key.split(":")[0], key.split(":")[1], key.split(":").slice(2).join(":")];
+  const L = lessonById(lid);
+  if (type === "w"){ const w = L.words.find(w => w[0] === rest); return w ? {type, L, w} : null; }
+  const s = sentencesOf(L)[Number(rest)]; return s ? {type, L, s} : null;
+}
+function addItem(key, box, due){ if (!S.boxes[key]) S.boxes[key] = {b:box, due, wrong:0}; }
+function introduceLesson(L){
+  const t1 = addDays(today(), 1);
+  L.words.forEach(w => addItem(wordKey(L, w), 1, t1));
+  sentencesOf(L).forEach((s, i) => addItem(sentKey(L, i), 1, t1));
+}
+function markLearn(key, ok){
+  const it = S.boxes[key]; if (!it) return;
+  if (!ok){ it.b = 1; it.due = addDays(today(), 1); it.wrong = (it.wrong || 0) + 1; it.lastWrong = today(); }
+}
+function markReview(key, ok){
+  const it = S.boxes[key]; if (!it) return;
+  if (ok){ it.b = Math.min(6, it.b + 1); it.due = it.b >= 6 ? "9999-12-31" : addDays(today(), INTERVAL[it.b]); }
+  else { it.b = 1; it.due = addDays(today(), 1); it.wrong = (it.wrong || 0) + 1; it.lastWrong = today(); }
+}
+const dueKeys = () => Object.keys(S.boxes).filter(k => S.boxes[k].b <= 5 && S.boxes[k].due <= today() && findItem(k)).sort((a, b) => S.boxes[a].due < S.boxes[b].due ? -1 : 1);
+function seedPrevious(){
+  if (S.seeded) return;
+  const cur = LESSONS.findIndex(l => l.id === S.lesson);
+  let i = 0;
+  LESSONS.slice(0, Math.max(0, cur)).forEach(L => {
+    L.words.forEach(w => { addItem(wordKey(L, w), 2, addDays(today(), 1 + Math.floor(i / 12))); i++; });
+    sentencesOf(L).forEach((s, j) => { addItem(sentKey(L, j), 2, addDays(today(), 1 + Math.floor(i / 12))); i++; });
+  });
+  S.seeded = true; save();
+}
+
+/* ───────── 오늘 기록 ───────── */
+function dayRec(){ const t = today(); S.days[t] = S.days[t] || {min:0, stars:0, done:[]}; return S.days[t]; }
+function weekDates(){
+  const now = new Date(); const dow = (now.getDay() + 6) % 7; // 월=0
+  return [0,1,2,3,4].map(i => dstr(new Date(now.getFullYear(), now.getMonth(), now.getDate() - dow + i)));
+}
+function todayPlan(){
+  const plan = [];
+  const due = dueKeys();
+  if (due.length) plan.push({kind:"review", label:"오늘의 복습", sub:Math.min(15, due.length) + "개", id:"review"});
+  const L = lessonById(S.lesson);
+  const acts = L.custom ? TEST_ACTS : ACTS.map(a => a.id);
+  const left = acts.filter(a => !(S.done[L.id] && S.done[L.id][a]));
+  left.slice(0, 2).forEach(a => plan.push({kind:"act", lesson:L.id, act:a, label:ACTS.find(x => x.id === a).name, sub:L.id === "T" ? "시험 대비" : L.id, id:L.id + ":" + a}));
+  if (!left.length){
+    const idx = LESSONS.findIndex(l => l.id === L.id), next = LESSONS[idx + 1];
+    if (next) plan.push({kind:"act", lesson:next.id, act:"cards", label:"다음 단원 단어 카드", sub:next.id, id:next.id + ":cards"});
+  }
+  return plan;
+}
+
+/* ───────── 보리 그림 ───────── */
+function boriSVG(){
+  const d = h("div");
+  d.innerHTML = '<svg viewBox="0 0 124 92" role="img" aria-label="고슴도치 보리"><path d="M12 74 L15 55 L4 49 L17 41 L10 27 L26 29 L27 13 L40 22 L49 7 L57 21 L68 8 L71 24 L84 15 L84 31 L97 28 L91 42 L104 46 L94 56 L100 70 Z" fill="#9A7656" stroke="#2B2A33" stroke-width="2.2" stroke-linejoin="round"/><path d="M66 75 C64 54 92 46 112 61 C120 67 114 76 104 77 L68 78 Z" fill="#EBD5B5" stroke="#2B2A33" stroke-width="2.2" stroke-linejoin="round"/><circle cx="95" cy="61" r="2.8" fill="#2B2A33"/><circle cx="116" cy="65" r="3.6" fill="#2B2A33"/><circle cx="101" cy="70" r="4" fill="#E4572E" opacity=".35"/><path d="M30 77 q4 6 9 0 M58 78 q4 6 9 0" fill="none" stroke="#2B2A33" stroke-width="2.2" stroke-linecap="round"/></svg>';
+  return d.firstChild;
+}
+
+/* ───────── 화면 전환 ───────── */
+let currentView = "home";
+const app = $("#app");
+function route(view, arg){
+  currentView = view; app.innerHTML = ""; window.scrollTo(0, 0);
+  if ("speechSynthesis" in window) try{ speechSynthesis.cancel(); }catch(e){}
+  ({home:viewHome, lessons:viewLessons, stickers:viewStickers, parent:viewParent, name:viewName}[view] || viewHome)(arg);
+}
+
+function boriLine(){
+  const L = lessonById(S.lesson), rec = S.days[today()];
+  const plan = todayPlan();
+  const done = rec ? plan.filter(p => rec.done.includes(p.id)).length : 0;
+  if (plan.length && done === plan.length) return "오늘 공부 끝! 내일 또 만나.";
+  const wrong = Object.keys(S.boxes).filter(k => S.boxes[k].lastWrong === addDays(today(), -1));
+  if (wrong.length){ const it = findItem(wrong[0]); if (it && it.type === "w") return "어제 헷갈린 " + it.w[0] + ", 오늘 다시 나와."; }
+  if (L.custom) return "학교 시험 단어 연습하자.";
+  return "오늘은 " + L.id + " 하자. " + L.topic + " 이야기야.";
+}
+
+function viewHome(){
+  if (!S.name) return route("name");
+  seedPrevious();
+  const plan = todayPlan(), rec = S.days[today()] || {done:[]};
+  const allDone = plan.length > 0 && plan.every(p => rec.done.includes(p.id));
+  const wk = weekDates(), dueN = dueKeys().length;
+
+  app.append(
+    h("div", {class:"row", style:"justify-content:space-between"},
+      h("h1", null, "안녕, " + S.name + "!"),
+      h("span", {class:"small muted"}, "별 ", h("span", {class:"star"}, "★"), " " + S.stars)),
+    h("div", {class:"bori-say"}, boriSVG(), h("div", {class:"say"}, boriLine())),
+    h("section", {class:"sheet tape col"},
+      h("h2", null, "오늘의 공부"),
+      h("div", null, plan.length ? plan.map(p => h("div", {class:"task"},
+          h("span", {class:"check" + (rec.done.includes(p.id) ? " on" : "")}, rec.done.includes(p.id) ? "○" : ""),
+          h("div", null, h("div", null, p.label), h("div", {class:"small muted en"}, p.sub)))) : h("p", {class:"muted"}, "모든 단원을 마쳤어! 복습 상자가 기다리고 있어.")),
+      allDone ? h("p", {class:"hand", style:"font-size:22px;color:var(--leaf)"}, "오늘 공부 끝! 별 " + (rec.stars || 0) + "개 모았어.")
+              : h("button", {class:"btn primary block", onclick:() => runPlan(plan.filter(p => !rec.done.includes(p.id)))}, rec.done.length ? "이어서 하기" : "오늘의 공부 시작")),
+    h("section", {class:"sheet col"},
+      h("div", {class:"row", style:"justify-content:space-between"}, h("h3", null, "이번 주 구슬"), h("span", {class:"small muted"}, wk.filter(d => S.days[d] && S.days[d].done.length).length + " / 5")),
+      h("div", {class:"week"}, wk.map((d, i) => h("div", {class:"day" + (d === today() ? " today" : "")},
+        h("span", {class:"b" + (S.days[d] && S.days[d].done.length ? " on" : "")}), WD[i + 1])))),
+    h("div", {class:"grid2"},
+      h("button", {class:"tile", onclick:() => route("lessons")}, h("span", {style:"font-size:28px"}, "📒"), h("span", null, "단원 고르기")),
+      h("button", {class:"tile", onclick:() => route("stickers")}, h("span", {style:"font-size:28px"}, "🏷️"), h("span", null, "스티커 북")),
+      h("button", {class:"tile", onclick:() => dueN ? runPlan([{kind:"review", id:"review", label:"복습"}]) : null, disabled:!dueN},
+        h("span", {style:"font-size:28px"}, "🗃️"), h("span", null, "복습 상자", h("br"), h("span", {class:"small muted"}, dueN ? "오늘 " + dueN + "개" : "오늘은 없어"))),
+      h("button", {class:"tile", onclick:() => speak("Hello! I'm Bori. Let's learn English!")}, h("span", {style:"font-size:28px"}, "🔈"), h("span", null, "소리 확인"))),
+    h("div", {class:"row", style:"justify-content:center"}, h("button", {class:"link", onclick:() => route("parent")}, "부모님 화면"))
+  );
+}
+
+function viewName(){
+  const inp = h("input", {id:"kidname", placeholder:"예: Elly", autocomplete:"off", class:"en", style:"font-size:24px"});
+  app.append(
+    h("div", {class:"bori-say"}, boriSVG(), h("div", {class:"say"}, "안녕! 나는 고슴도치 보리야. 너의 영어 이름을 알려 줄래?")),
+    h("section", {class:"sheet tape col"},
+      h("label", {for:"kidname"}, "영어 이름 (부모님이 함께 정해 주세요)"), inp,
+      h("button", {class:"btn primary block", onclick:() => {
+        const v = inp.value.trim(); if (!v){ inp.focus(); return; }
+        S.name = v.slice(0, 20); save(); speak("Hello, " + S.name + "! Nice to meet you."); route("home");
+      }}, "시작하기")),
+    h("p", {class:"note"}, "기본 진도는 L8(Do You Have a Ruler?)이에요. 학교 진도가 다르면 부모님 화면에서 바꿀 수 있어요. 처음 PIN은 부모님 화면에 들어갈 때 정합니다.")
+  );
+  setTimeout(() => inp.focus(), 50);
+}
+
+/* ───────── 단원 화면 ───────── */
+let lessonsSel = null;
+function viewLessons(){
+  const Ls = allLessons();
+  lessonsSel = lessonsSel || S.lesson;
+  const L = lessonById(lessonsSel);
+  const acts = L.custom ? ACTS.filter(a => TEST_ACTS.includes(a.id)) : ACTS;
+  const done = S.done[L.id] || {};
+  app.append(
+    h("div", {class:"topbar"}, h("button", {class:"close", "aria-label":"홈으로", onclick:() => route("home")}, "‹"), h("h2", null, "단원 고르기")),
+    h("div", {class:"chips", role:"tablist"}, Ls.map(x => h("button", {class:"chip" + (x.id === L.id ? " on" : ""), role:"tab", "aria-selected":String(x.id === L.id), onclick:() => { lessonsSel = x.id; route("lessons"); }}, x.id === "T" ? "시험" : x.id))),
+    h("section", {class:"sheet tape col"},
+      h("div", {class:"row"}, h("span", {style:"font-size:40px"}, L.theme), h("div", null, h("h3", {class:"en", style:"font-size:20px"}, L.title), h("div", {class:"muted en"}, L.key))),
+      L.id === S.lesson ? h("span", {class:"small", style:"color:var(--leaf)"}, "지금 배우는 단원") : null,
+      ["단어", "문장", "회화", "확인"].map(mod => {
+        const list = acts.filter(a => a.mod === mod); if (!list.length) return null;
+        return h("div", {class:"col", style:"gap:6px"}, h("div", {class:"small muted"}, mod),
+          list.map(a => h("button", {class:"tile", onclick:() => runPlan([{kind:"act", lesson:L.id, act:a.id, id:L.id + ":" + a.id}], "lessons")},
+            h("span", {class:"check" + (done[a.id] ? " on" : "")}, done[a.id] ? "○" : ""),
+            h("span", {style:"flex:1"}, a.name, h("br"), h("span", {class:"small muted"}, a.info)),
+            a.id === "test" && typeof done.test === "number" ? h("span", {class:"small"}, done.test + "점") : null)));
+      }))
+  );
+}
+
+/* ───────── 스티커 북 ───────── */
+let stickerSel = null;
+function viewStickers(){
+  stickerSel = stickerSel || S.lesson;
+  const L = lessonById(stickerSel);
+  const got = L.words.filter(w => S.boxes[wordKey(L, w)]).length;
+  app.append(
+    h("div", {class:"topbar"}, h("button", {class:"close", "aria-label":"홈으로", onclick:() => route("home")}, "‹"), h("h2", null, "스티커 북")),
+    h("div", {class:"chips"}, allLessons().map(x => h("button", {class:"chip" + (x.id === L.id ? " on" : ""), onclick:() => { stickerSel = x.id; route("stickers"); }}, x.id === "T" ? "시험" : x.id))),
+    h("section", {class:"sheet col"},
+      h("div", {class:"row", style:"justify-content:space-between"}, h("h3", {class:"en"}, L.title), h("span", {class:"small muted"}, got + " / " + L.words.length)),
+      h("div", {class:"stickers"}, L.words.map(w => {
+        const it = S.boxes[wordKey(L, w)];
+        const cls = "sticker" + (it ? " got" : "") + (it && it.b >= 6 ? " gold" : "");
+        return h("button", {class:cls, onclick:() => it && speak(w[0]), "aria-label":w[0]},
+          it ? h("span", {class:"s-pic"}, w[2] || "Aa") : null, h("span", null, it ? w[0] : "?"));
+      })),
+      h("p", {class:"small muted"}, "단어 카드를 보면 스티커가 생기고, 복습 상자를 끝까지 통과하면 금테가 둘러져요.")));
+}
+
+/* ───────── 활동 실행기 ───────── */
+let planQueue = [], planReturn = "home", actStart = 0;
+function runPlan(items, ret){ planQueue = items.slice(); planReturn = ret || "home"; nextInPlan(); }
+function nextInPlan(){
+  const item = planQueue.shift();
+  if (!item) return route(planReturn);
+  actStart = Date.now();
+  if (item.kind === "review") return actReview(res => finishItem(item, res));
+  const L = lessonById(item.lesson);
+  const fn = {cards:actCards, match:actMatch, spell:actSpell, pattern:actPattern, order:actOrder, listen:actListen, role:actRole, chat:actChat, test:actTest}[item.act];
+  fn(L, res => finishItem(item, res));
+}
+function starsFor(res){ if (!res.total) return res.stars || 1; const r = res.correct / res.total; return r >= .9 ? 3 : r >= .7 ? 2 : 1; }
+function finishItem(item, res){
+  const rec = dayRec();
+  rec.min += Math.min(15, Math.max(1, Math.round((Date.now() - actStart) / 60000)));
+  const st = starsFor(res); rec.stars += st; S.stars += st;
+  if (!rec.done.includes(item.id)) rec.done.push(item.id);
+  if (item.kind === "act"){
+    S.done[item.lesson] = S.done[item.lesson] || {};
+    if (item.act === "test"){
+      const score = Math.round(res.correct / res.total * 100);
+      S.done[item.lesson].test = Math.max(score, S.done[item.lesson].test || 0);
+      S.tests.unshift({lesson:item.lesson, date:today(), score, wrong:res.wrongWords || []}); S.tests = S.tests.slice(0, 40);
+    } else S.done[item.lesson][item.act] = true;
+    if (item.act === "cards" && item.lesson !== S.lesson && !lessonById(item.lesson).custom){
+      const ci = LESSONS.findIndex(l => l.id === S.lesson), ni = LESSONS.findIndex(l => l.id === item.lesson);
+      if (ni > ci) S.lesson = item.lesson;
+    }
+  }
+  save();
+  app.innerHTML = "";
+  sfx("pop");
+  const praise = res.fixed && res.fixed.length ? "어제 틀린 " + res.fixed[0] + ", 오늘은 맞혔어." :
+    res.total ? (res.correct === res.total ? "하나도 안 틀렸어." : res.total - res.correct + "개는 복습 상자에 넣어 둘게.") : "잘 따라왔어.";
+  app.append(
+    h("div", {class:"bori-say"}, boriSVG(), h("div", {class:"say"}, praise)),
+    h("section", {class:"sheet tape col", style:"text-align:center;align-items:center"},
+      h("h2", null, res.title || "끝!"),
+      h("div", {class:"stars", "aria-label":"별 " + st + "개"}, h("span", {class:"star"}, "★".repeat(st)), h("span", {style:"color:var(--line)"}, "★".repeat(3 - st))),
+      res.total ? h("p", {class:"muted"}, res.total + "개 중 " + res.correct + "개 맞힘") : null,
+      h("button", {class:"btn primary block", onclick:nextInPlan}, planQueue.length ? "다음 공부" : "마치기")));
+}
+function frame(title, total, onClose){
+  const beads = h("div", {class:"string", "aria-hidden":"true"});
+  const n = Math.min(total, 12);
+  for (let i = 0; i < n; i++) beads.append(h("span", {class:"bead"}));
+  const body = h("div", {class:"col"});
+  app.innerHTML = "";
+  app.append(h("div", {class:"topbar"}, h("button", {class:"close", "aria-label":"그만하기", onclick:onClose || (() => route(planReturn))}, "×"), h("span", {class:"small muted", style:"flex:none"}, title), beads), body);
+  return {body, setProgress(i){ const on = Math.round(i / total * n); [...beads.children].forEach((b, k) => b.classList.toggle("on", k < on)); }};
+}
+
+/* 사지선다 공용 */
+function choiceQuestion(body, q, onDone){
+  body.innerHTML = "";
+  const opts = h("div", {class:"col", style:"gap:10px"});
+  let answered = false;
+  q.options.forEach(o => {
+    const b = h("button", {class:"tile", style:"min-height:64px;font-size:19px"}, o.pic ? h("span", {style:"font-size:34px"}, o.pic) : null, h("span", {class:o.en ? "en" : ""}, o.label));
+    b.addEventListener("click", () => {
+      if (answered) return; answered = true;
+      if (o.correct){ b.classList.add("opt-ok"); showStamp(true); if (q.sayAfter) speak(q.sayAfter); setTimeout(() => onDone(true), 750); }
+      else {
+        b.classList.add("opt-no"); showStamp(false);
+        [...opts.children].forEach((c, i) => { if (q.options[i].correct) c.classList.add("opt-ok"); });
+        if (q.sayAfter) setTimeout(() => speak(q.sayAfter), 500);
+        body.append(h("button", {class:"btn primary block", onclick:() => onDone(false)}, "다음"));
+      }
+    });
+    opts.append(b);
+  });
+  body.append(q.head, opts);
+  if (q.say) setTimeout(() => speak(q.say), 250);
+}
+function wordPool(L, n, exclude){
+  let pool = L.words.filter(w => w !== exclude);
+  if (pool.length < n) pool = pool.concat(LESSONS.flatMap(x => x.words).filter(w => w !== exclude && !pool.includes(w)));
+  return shuffle(pool).slice(0, n);
+}
+function hearToMeaning(L, w){
+  const opts = shuffle([w].concat(wordPool(L, 3, w).filter(x => x[1] !== w[1]).slice(0, 3)));
+  return {head:h("div", {class:"sheet col", style:"align-items:center;text-align:center"},
+      h("p", {class:"muted"}, "잘 듣고 뜻을 골라 봐"),
+      h("button", {class:"btn sound", onclick:() => speak(w[0])}, "🔈 다시 듣기"),
+      h("button", {class:"link", onclick:() => speak(w[0], true)}, "천천히 듣기")),
+    say:w[0], options:opts.map(x => ({label:x[1].split(",")[0], pic:x[2], correct:x === w}))};
+}
+function meaningToEnglish(L, w){
+  const opts = shuffle([w].concat(wordPool(L, 3, w).filter(x => x[0] !== w[0]).slice(0, 3)));
+  return {head:h("div", {class:"sheet col", style:"align-items:center;text-align:center"},
+      w[2] ? h("div", {class:"pic"}, w[2]) : null, h("p", {style:"font-size:24px"}, w[1]), h("p", {class:"muted small"}, "영어로 뭘까?")),
+    sayAfter:w[0], options:opts.map(x => ({label:x[0], en:true, correct:x === w}))};
+}
+
+/* 1. 단어 카드 */
+function actCards(L, done){
+  introduceLesson(L); save();
+  const list = L.words.concat(L.ext.map(e => [e[0], e[1], e[2], "", true]));
+  let i = 0;
+  const f = frame("단어 카드", list.length);
+  function show(){
+    f.setProgress(i);
+    const w = list[i]; f.body.innerHTML = "";
+    const koEl = h("p", {class:"ko"}, w[1]);
+    f.body.append(
+      h("div", {class:"sheet tape tilt wordcard"},
+        w[4] ? h("span", {class:"small", style:"color:var(--sky)"}, "더 배워 볼 단어") : null,
+        h("div", {class:"pic"}, w[2] || h("span", {class:"en", style:"font-size:28px;color:var(--pencil)"}, "문장 속 단어")),
+        h("div", {class:"word"}, w[0]), koEl,
+        w[3] ? h("button", {class:"ex link", style:"color:var(--ink)", onclick:() => speak(w[3])}, w[3]) : null),
+      h("div", {class:"grid2"},
+        h("button", {class:"btn sound", onclick:() => speak(w[0])}, "🔈 듣기"),
+        h("button", {class:"btn sound", onclick:() => speak(w[0], true)}, "🐢 천천히")),
+      h("button", {class:"btn primary block", onclick:() => { i++; i < list.length ? show() : done({title:L.id + " 단어 카드 끝", stars:1}); }}, "따라 말했어"));
+    setTimeout(() => speak(w[0]), 200);
+  }
+  show();
+}
+
+/* 2. 듣고 고르기 */
+function actMatch(L, done){
+  const list = shuffle(L.words).slice(0, 12);
+  let i = 0, correct = 0; const fixed = [];
+  const f = frame("듣고 고르기", list.length);
+  function next(){
+    f.setProgress(i);
+    if (i >= list.length) return done({title:"듣고 고르기 끝", correct, total:list.length, fixed});
+    const w = list[i], key = wordKey(L, w);
+    choiceQuestion(f.body, hearToMeaning(L, w), ok => {
+      if (ok){ correct++; const it = S.boxes[key]; if (it && it.lastWrong && it.lastWrong < today()) fixed.push(w[0]); }
+      markLearn(key, ok); i++; next();
+    });
+  }
+  next();
+}
+
+/* 3. 철자 쓰기 */
+const spellable = w => /^[a-z]+$/i.test(w[0]) && w[0].length <= 9;
+function spellQuestion(body, w, onDone){
+  body.innerHTML = "";
+  const target = w[0].toLowerCase();
+  const decoys = shuffle("abcdefghijklmnoprstuwy".split("").filter(c => !target.includes(c))).slice(0, 2);
+  const tiles = shuffle(target.split("").concat(decoys));
+  const picked = [];
+  const slots = h("div", {class:"lines4", "aria-label":"쓰기 칸"});
+  const letters = h("div", {class:"letters"});
+  const check = h("button", {class:"btn primary block", disabled:true}, "다 썼어");
+  function paint(){
+    slots.innerHTML = "";
+    for (let k = 0; k < target.length; k++) slots.append(h("span", {class:"slot" + (picked[k] ? "" : " empty")}, picked[k] ? tiles[picked[k].idx] : ""));
+    [...letters.children].forEach((b, idx) => b.classList.toggle("used", picked.some(p => p.idx === idx)));
+    check.disabled = picked.length !== target.length;
+  }
+  tiles.forEach((c, idx) => letters.append(h("button", {class:"letter", onclick:() => { if (picked.length < target.length){ picked.push({idx}); sfx("pop"); paint(); } }}, c)));
+  check.addEventListener("click", () => {
+    const ok = picked.map(p => tiles[p.idx]).join("") === target;
+    showStamp(ok); speak(w[0]);
+    if (ok) setTimeout(() => onDone(true), 750);
+    else {
+      check.remove();
+      body.append(h("div", {class:"sheet", style:"text-align:center;background:var(--peach)"}, h("div", {class:"small muted"}, "이렇게 써"), h("div", {class:"word", style:"font-size:36px"}, w[0])),
+        h("button", {class:"btn primary block", onclick:() => onDone(false)}, "다음"));
+    }
+  });
+  body.append(
+    h("div", {class:"sheet col", style:"align-items:center;text-align:center"},
+      w[2] ? h("div", {class:"pic", style:"font-size:64px;height:72px"}, w[2]) : null, h("p", {style:"font-size:21px"}, w[1]),
+      h("button", {class:"btn sound", onclick:() => speak(w[0])}, "🔈 듣기")),
+    slots, letters,
+    h("div", {class:"grid2"}, h("button", {class:"btn", onclick:() => { picked.pop(); paint(); }}, "⌫ 지우기"), check));
+  paint();
+  setTimeout(() => speak(w[0]), 250);
+}
+function actSpell(L, done){
+  let list = L.words.filter(spellable); list = shuffle(list).slice(0, 8);
+  if (!list.length) return done({title:"쓸 단어가 없어요", stars:1});
+  let i = 0, correct = 0; const fixed = [];
+  const f = frame("철자 쓰기", list.length);
+  function next(){
+    f.setProgress(i);
+    if (i >= list.length) return done({title:"철자 쓰기 끝", correct, total:list.length, fixed});
+    const w = list[i], key = wordKey(L, w);
+    spellQuestion(f.body, w, ok => { if (ok){ correct++; const it = S.boxes[key]; if (it && it.lastWrong && it.lastWrong < today()) fixed.push(w[0]); } markLearn(key, ok); i++; next(); });
+  }
+  next();
+}
+
+/* 4. 문장 바꿔 끼우기 */
+function actPattern(L, done){
+  const pats = L.pats.concat(L.sents.map(s => ({t:s.t, ko:s.ko, s:[]})));
+  let i = 0;
+  const f = frame("문장 바꿔 끼우기", pats.length);
+  function show(){
+    f.setProgress(i);
+    const p = pats[i]; let cur = p.s[0];
+    f.body.innerHTML = "";
+    const sentence = h("p", {class:"en", style:"font-size:30px;line-height:1.35;text-align:center"});
+    const ko = h("p", {class:"ko", style:"text-align:center"});
+    const full = () => p.t.replace("___", cur || "");
+    function paint(){
+      sentence.innerHTML = "";
+      if (p.s.length){ const [a, b] = p.t.split("___"); sentence.append(a, h("span", {class:"slotword"}, cur), b); }
+      else sentence.append(p.t);
+      ko.textContent = p.ko.replace("___", cur ? koSlot(L, cur) : "");
+    }
+    paint();
+    f.body.append(
+      h("div", {class:"sheet tape col", style:"align-items:center"}, sentence, ko, h("button", {class:"btn sound", onclick:() => speak(full())}, "🔈 듣기")),
+      p.s.length ? h("div", {class:"col", style:"gap:6px"}, h("p", {class:"small muted"}, "빈칸에 다른 단어를 넣어 봐"),
+        h("div", {class:"row"}, p.s.map(s => h("button", {class:"wtile", onclick:() => { cur = s; paint(); speak(full()); }}, s)))) : h("p", {class:"small muted"}, "통째로 외워 두는 문장이야. 듣고 따라 말해 봐."),
+      h("button", {class:"btn primary block", onclick:() => { i++; i < pats.length ? show() : done({title:"문장 연습 끝", stars:1}); }}, "따라 말했어"));
+    setTimeout(() => speak(full()), 250);
+  }
+  show();
+}
+
+/* 5. 순서 퍼즐 */
+function orderQuestion(body, s, onDone){
+  body.innerHTML = "";
+  const end = (s.t.match(/[.?!]$/) || [""])[0];
+  const words = s.t.replace(/[.?!]$/, "").split(" ");
+  let tiles = shuffle(words.map((w, i) => ({w, i})));
+  if (tiles.every((t, k) => t.i === k) && words.length > 1) tiles = tiles.reverse();
+  const picked = [];
+  const built = h("div", {class:"built"});
+  const pool = h("div", {class:"row"});
+  const check = h("button", {class:"btn primary block", disabled:true}, "다 만들었어");
+  function paint(){
+    built.innerHTML = "";
+    picked.forEach((t, k) => built.append(h("button", {class:"wtile", onclick:() => { picked.splice(k, 1); paint(); }}, t.w)));
+    if (picked.length === words.length) built.append(h("span", {class:"en", style:"font-size:24px"}, end));
+    [...pool.children].forEach((b, k) => b.classList.toggle("used", picked.includes(tiles[k])));
+    check.disabled = picked.length !== words.length;
+  }
+  tiles.forEach(t => pool.append(h("button", {class:"wtile", onclick:() => { if (!picked.includes(t)){ picked.push(t); paint(); } }}, t.w)));
+  check.addEventListener("click", () => {
+    const ok = picked.map(t => t.w).join(" ") === words.join(" ");
+    showStamp(ok); speak(s.t);
+    if (ok) setTimeout(() => onDone(true), 800);
+    else { check.remove(); body.append(h("div", {class:"sheet en", style:"background:var(--peach);font-size:22px;text-align:center"}, s.t), h("button", {class:"btn primary block", onclick:() => onDone(false)}, "다음")); }
+  });
+  body.append(
+    h("div", {class:"sheet col", style:"align-items:center;text-align:center"}, h("p", {style:"font-size:21px"}, s.ko), h("button", {class:"btn sound", onclick:() => speak(s.t)}, "🔈 듣기")),
+    built, h("p", {class:"small muted"}, "단어를 눌러 순서대로 놓아 봐. 놓은 단어를 누르면 빠져."), pool,
+    check);
+  paint();
+}
+function actOrder(L, done){
+  const list = sentencesOf(L).map((s, i) => ({s, i})).filter(x => x.s.t.split(" ").length > 1);
+  if (!list.length) return done({title:"문장이 없어요", stars:1});
+  let i = 0, correct = 0;
+  const f = frame("순서 퍼즐", list.length);
+  function next(){
+    f.setProgress(i);
+    if (i >= list.length) return done({title:"순서 퍼즐 끝", correct, total:list.length});
+    orderQuestion(f.body, list[i].s, ok => { if (ok) correct++; markLearn(sentKey(L, list[i].i), ok); i++; next(); });
+  }
+  next();
+}
+
+/* 6·7. 대화 듣기 / 역할 놀이 */
+function dialogueRunner(L, mode, done){
+  const me = S.name || "Elly";
+  const lines = L.dlg.map(d => [d[0], fill(d[1], me), fill(d[2], me)]);
+  const f = frame(mode === "role" ? "역할 놀이" : "대화 듣기", lines.length);
+  const log = h("div", {class:"col", style:"gap:10px"});
+  const ctrl = h("div", {class:"col"});
+  f.body.append(h("div", {class:"scene", "aria-hidden":"true"}, L.theme), log, ctrl);
+  let i = 0;
+  function bubble(d, now){
+    return h("div", {class:"bubble" + (d[0] === "M" ? " me" : "") + (now ? " now" : "")},
+      h("div", {class:"who"}, d[0] === "M" ? me + " (나)" : "보리"),
+      h("button", {class:"en", style:"text-align:left", onclick:() => speak(d[1])}, d[1]), h("div", {class:"small muted"}, d[2]));
+  }
+  function step(){
+    f.setProgress(i); ctrl.innerHTML = "";
+    if (i >= lines.length){
+      ctrl.append(h("button", {class:"btn sound block", onclick:() => { log.innerHTML = ""; i = 0; step(); }}, "처음부터 다시"),
+        h("button", {class:"btn primary block", onclick:() => done({title:mode === "role" ? "역할 놀이 끝" : "대화 듣기 끝", stars:mode === "role" ? 2 : 1})}, "끝내기"));
+      return;
+    }
+    const d = lines[i];
+    [...log.children].forEach(c => c.classList.remove("now"));
+    if (mode === "role" && d[0] === "M"){
+      log.append(bubble(d, true));
+      ctrl.append(h("p", {class:"small muted"}, "네 차례야. 소리 내어 말해 봐."),
+        h("div", {class:"grid2"}, h("button", {class:"btn sound", onclick:() => speak(d[1], true)}, "🔈 힌트 듣기"),
+          h("button", {class:"btn primary", onclick:() => { i++; step(); }}, "말했어")));
+    } else {
+      log.append(bubble(d, true)); speak(d[1]);
+      ctrl.append(h("button", {class:"btn primary block", onclick:() => { i++; step(); }}, "다음"));
+    }
+    log.lastChild.scrollIntoView({block:"nearest", behavior:"smooth"});
+  }
+  step();
+}
+const actListen = (L, done) => dialogueRunner(L, "listen", done);
+const actRole = (L, done) => dialogueRunner(L, "role", done);
+
+/* 8. 보리랑 이야기 */
+async function actChat(L, done){
+  const me = S.name || "Elly";
+  const f = frame("보리랑 이야기", 5);
+  const log = h("div", {class:"col", style:"gap:10px"});
+  const ctrl = h("div", {class:"col"});
+  f.body.append(h("div", {class:"bori-say"}, boriSVG(), h("div", {class:"say small"}, "보리 말에 맞는 대답을 골라서 소리 내어 말해 봐.")), log, ctrl);
+  let sample = null;
+  if (S.settings.ai && window.claude && window.claude.use){ try{ sample = await claude.use("sample"); }catch(e){} }
+  const history = [];
+  let turn = 0, picks = 0;
+  const vocab = L.words.map(w => w[0]).join(", ");
+  const pats = L.pats.map(p => p.t).concat(L.sents.map(s => s.t)).join(" | ");
+  // 대본 대화 (AI를 쓸 수 없을 때)
+  const script = [];
+  for (let k = 0; k < L.dlg.length; k++){ if (L.dlg[k][0] === "B" && L.dlg[k + 1] && L.dlg[k + 1][0] === "M") script.push({bori:fill(L.dlg[k][1], me), ko:fill(L.dlg[k][2], me), answer:fill(L.dlg[k + 1][1], me)}); }
+  const meLines = LESSONS.flatMap(x => x.dlg.filter(d => d[0] === "M").map(d => fill(d[1], me)));
+  function addBubble(who, en, ko){
+    log.append(h("div", {class:"bubble" + (who === "M" ? " me" : "")}, h("div", {class:"who"}, who === "M" ? me + " (나)" : "보리"),
+      h("button", {class:"en", style:"text-align:left", onclick:() => speak(en)}, en), ko ? h("div", {class:"small muted"}, ko) : null));
+    log.lastChild.scrollIntoView({block:"nearest", behavior:"smooth"});
+  }
+  function offer(choices, last){
+    ctrl.innerHTML = "";
+    ctrl.append(h("p", {class:"small muted"}, "대답을 골라 봐"),
+      ...choices.map(c => h("button", {class:"tile en", style:"font-size:20px", onclick:() => {
+        speak(c); addBubble("M", c); history.push({role:"me", text:c}); picks++;
+        ctrl.innerHTML = ""; turn++; f.setProgress(turn);
+        if (last || turn >= 5) return setTimeout(endChat, 900);
+        setTimeout(nextTurn, 900);
+      }}, c)));
+  }
+  function endChat(){
+    ctrl.innerHTML = "";
+    ctrl.append(h("button", {class:"btn primary block", onclick:() => done({title:"보리랑 이야기 끝", stars:2})}, "끝내기"));
+  }
+  function scripted(){
+    const s = script[turn];
+    if (!s) return endChat();
+    addBubble("B", s.bori, s.ko); speak(s.bori);
+    const wrong = shuffle(meLines.filter(x => x !== s.answer)).slice(0, 2);
+    offer(shuffle([s.answer].concat(wrong)), turn >= script.length - 1);
+  }
+  async function nextTurn(){
+    if (!sample) return scripted();
+    ctrl.innerHTML = ""; ctrl.append(h("p", {class:"small muted"}, "보리가 생각하는 중…"));
+    const last = turn >= 4;
+    const prompt =
+`You are Bori, a small hedgehog who is a pen pal of ${me}, a Korean girl in 3rd grade learning English.
+Today's textbook lesson: "${L.title}". Allowed words: ${vocab}, plus very common words (I, you, my, is, are, a, the, yes, no, hello, wow, me, too, it).
+Lesson patterns: ${pats}
+Rules: speak in ONE short sentence or question, at most 8 words, using only the lesson words and patterns. Warm and plain. No emoji. Never mention AI, computers or being a program. Sometimes ask a question she can answer with a lesson pattern.
+Conversation so far:
+${history.map(m => (m.role === "bori" ? "Bori: " : me + ": ") + m.text).join("\n") || "(start: greet her and begin the topic)"}
+${last ? "This is the last turn: say a friendly goodbye." : ""}
+Reply ONLY with JSON: {"bori": "<your line>", "ko": "<natural Korean translation for a child>", "choices": ["<reply 1>", "<reply 2>", "<reply 3>"]}
+The 3 choices are short English replies (max 7 words) ${me} could say next, each a correct, natural answer built from the lesson patterns, different from each other.${last ? ' Make the choices goodbyes like "Goodbye, Bori!".' : ""}`;
+    try{
+      const r = await sample.json(prompt, {modelTier:"quick", cache:false});
+      if (!r || typeof r.bori !== "string" || !Array.isArray(r.choices) || r.choices.length < 2) throw new Error("shape");
+      history.push({role:"bori", text:r.bori});
+      ctrl.innerHTML = "";
+      addBubble("B", r.bori, r.ko || ""); speak(r.bori);
+      offer(r.choices.slice(0, 3).map(String), last);
+    }catch(e){ sample = null; turn = 0; log.innerHTML = ""; history.length = 0; scripted(); }
+  }
+  nextTurn();
+}
+
+/* 9. 단원 테스트 */
+function actTest(L, done){
+  const qs = [];
+  const ws = shuffle(L.words).slice(0, 8);
+  ws.forEach((w, k) => qs.push({kind:"w", w, q:k % 2 ? meaningToEnglish(L, w) : hearToMeaning(L, w)}));
+  const sents = sentencesOf(L);
+  const others = LESSONS.filter(x => x.id !== L.id).flatMap(sentencesOf);
+  shuffle(sents).slice(0, 4).forEach(s => {
+    const opts = shuffle([s].concat(shuffle(others.filter(o => o.t !== s.t)).slice(0, 2)));
+    qs.push({kind:"s", q:{head:h("div", {class:"sheet col", style:"text-align:center"}, h("p", {class:"small muted"}, "알맞은 문장을 골라 봐"), h("p", {style:"font-size:22px"}, s.ko)),
+      sayAfter:s.t, options:opts.map(o => ({label:o.t, en:true, correct:o === s}))}});
+  });
+  const me = S.name || "Elly";
+  const pairs = [];
+  for (let k = 0; k < L.dlg.length - 1; k++) if (L.dlg[k][0] !== L.dlg[k + 1][0]) pairs.push([fill(L.dlg[k][1], me), fill(L.dlg[k + 1][1], me), fill(L.dlg[k][2], me)]);
+  const otherReplies = LESSONS.filter(x => x.id !== L.id).flatMap(x => x.dlg.map(d => fill(d[1], me)));
+  shuffle(pairs).slice(0, 2).forEach(p => {
+    const opts = shuffle([p[1]].concat(shuffle(otherReplies.filter(o => o !== p[1])).slice(0, 2)));
+    qs.push({kind:"d", q:{head:h("div", {class:"sheet col"}, h("p", {class:"small muted"}, "보리가 이렇게 말했어. 뭐라고 대답할까?"),
+      h("div", {class:"bubble"}, h("button", {class:"en", onclick:() => speak(p[0])}, p[0]), h("div", {class:"small muted"}, p[2]))),
+      say:p[0], options:opts.map(o => ({label:o, en:true, correct:o === p[1]}))}});
+  });
+  let i = 0, correct = 0; const wrongWords = [];
+  const f = frame("단원 테스트", qs.length);
+  function next(){
+    f.setProgress(i);
+    if (i >= qs.length){
+      const score = Math.round(correct / qs.length * 100);
+      return done({title:score >= 80 ? L.id + " 통과!" : "조금만 더 연습하자", correct, total:qs.length, wrongWords});
+    }
+    const item = qs[i];
+    choiceQuestion(f.body, item.q, ok => {
+      if (ok) correct++;
+      else if (item.kind === "w"){ wrongWords.push(item.w[0]); markLearn(wordKey(L, item.w), false); }
+      i++; next();
+    });
+  }
+  next();
+}
+
+/* 복습 */
+function actReview(done){
+  const keys = dueKeys().slice(0, 15);
+  let i = 0, correct = 0; const fixed = [];
+  const f = frame("오늘의 복습", keys.length);
+  function next(){
+    f.setProgress(i);
+    if (i >= keys.length) return done({title:"복습 끝", correct, total:keys.length, fixed});
+    const key = keys[i], it = findItem(key), box = S.boxes[key];
+    const after = ok => {
+      if (ok){ correct++; if (box.lastWrong && box.lastWrong < today() && it.type === "w") fixed.push(it.w[0]); }
+      markReview(key, ok); save(); i++; next();
+    };
+    if (it.type === "s") return orderQuestion(f.body, it.s, after);
+    if (box.b >= 3 && spellable(it.w)) return spellQuestion(f.body, it.w, after);
+    choiceQuestion(f.body, box.b >= 2 ? meaningToEnglish(it.L, it.w) : hearToMeaning(it.L, it.w), after);
+  }
+  next();
+}
+
+/* ───────── 부모님 화면 ───────── */
+let parentOk = false;
+function viewParent(){
+  if (!parentOk) return pinPad();
+  const wk = weekDates();
+  const maxMin = Math.max(15, ...wk.map(d => (S.days[d] || {}).min || 0));
+  const wrongTop = Object.keys(S.boxes).filter(k => S.boxes[k].wrong > 0 && findItem(k))
+    .sort((a, b) => S.boxes[b].wrong - S.boxes[a].wrong).slice(0, 10);
+  const boxCount = [1,2,3,4,5,6].map(b => Object.values(S.boxes).filter(x => x.b === b).length);
+  const sel = h("select", {id:"lessonSel"}, allLessons().map(l => h("option", {value:l.id, selected:l.id === S.lesson}, l.id + " · " + l.title)));
+  const nameIn = h("input", {id:"pname", value:S.name, class:"en"});
+  const aiIn = h("input", {id:"aiOn", type:"checkbox", checked:S.settings.ai});
+  const custom = h("textarea", {id:"custom", placeholder:"ruler = 자\nscissors = 가위"}, S.custom.map(w => w.en + " = " + w.ko).join("\n"));
+  const msg = h("p", {class:"small", style:"color:var(--leaf);min-height:1.5em"});
+  const resetBox = h("div", {class:"col"});
+  app.append(
+    h("div", {class:"topbar"}, h("button", {class:"close", "aria-label":"홈으로", onclick:() => { parentOk = false; route("home"); }}, "‹"), h("h2", null, "부모님 화면")),
+    h("section", {class:"sheet col"},
+      h("h3", null, "이번 주 공부 시간 (분)"),
+      h("div", {class:"bars"}, wk.map((d, i) => { const m = (S.days[d] || {}).min || 0; return h("div", {class:"bar"}, h("span", {class:"num"}, m), h("i", {style:"height:" + Math.round(m / maxMin * 80) + "px"}), WD[i + 1]); })),
+      h("p", {class:"small muted"}, "현재 단원 " + S.lesson + " · 누적 별 " + S.stars + "개")),
+    h("section", {class:"sheet col"},
+      h("h3", null, "자주 틀리는 항목"),
+      wrongTop.length ? h("table", null, h("tr", null, h("th", null, "항목"), h("th", null, "뜻"), h("th", {class:"num"}, "틀린 횟수")),
+        wrongTop.map(k => { const it = findItem(k); return h("tr", null, h("td", {class:"en"}, it.type === "w" ? it.w[0] : it.s.t), h("td", null, it.type === "w" ? it.w[1] : it.s.ko), h("td", {class:"num"}, S.boxes[k].wrong)); }))
+        : h("p", {class:"muted small"}, "아직 틀린 항목이 없어요.")),
+    h("section", {class:"sheet col"},
+      h("h3", null, "복습 상자"),
+      h("table", null, h("tr", null, ["1칸", "2칸", "3칸", "4칸", "5칸", "완료"].map(t => h("th", {class:"num"}, t))), h("tr", null, boxCount.map(n => h("td", {class:"num"}, n)))),
+      h("p", {class:"small muted"}, "1·2·4·7·14일 간격으로 다시 나오고, 틀리면 1칸으로 돌아가요.")),
+    h("section", {class:"sheet col"},
+      h("h3", null, "테스트 기록"),
+      S.tests.length ? h("table", null, h("tr", null, h("th", null, "날짜"), h("th", null, "단원"), h("th", {class:"num"}, "점수"), h("th", null, "틀린 단어")),
+        S.tests.slice(0, 10).map(t => h("tr", null, h("td", {class:"num"}, t.date.slice(5)), h("td", null, t.lesson), h("td", {class:"num"}, t.score), h("td", {class:"en"}, t.wrong.join(", ") || "–"))))
+        : h("p", {class:"muted small"}, "아직 본 테스트가 없어요.")),
+    h("section", {class:"sheet col"},
+      h("h3", null, "설정"),
+      h("label", {for:"lessonSel"}, "학교 진도 (지금 배우는 단원)", sel),
+      h("label", {for:"pname"}, "아이 영어 이름", nameIn),
+      h("label", {class:"toggle", for:"aiOn"}, h("span", null, "보리랑 이야기에서 Claude로 대화 만들기", h("br"), h("span", {class:"small muted"}, "끄면 교과서 대본으로만 대화해요")), aiIn),
+      h("label", {for:"custom"}, "학교 시험 단어 (한 줄에 하나, 영어 = 뜻)", custom),
+      h("button", {class:"btn primary block", onclick:() => {
+        S.lesson = sel.value; S.name = nameIn.value.trim() || S.name; S.settings.ai = aiIn.checked;
+        S.custom = custom.value.split("\n").map(l => l.split("=")).filter(p => p[0] && p[0].trim() && p[1] && p[1].trim()).map(p => ({en:p[0].trim(), ko:p[1].trim()})).slice(0, 40);
+        save(); msg.textContent = "저장했어요."; }}, "저장"),
+      msg),
+    h("section", {class:"sheet col"},
+      h("h3", null, "PIN과 기록"),
+      h("button", {class:"btn block", onclick:() => { S.settings.pin = ""; save(); parentOk = false; route("parent"); }}, "PIN 다시 정하기"),
+      resetBox),
+    h("p", {class:"note"}, "기록은 이 기기와 Claude 계정에 함께 저장돼요. 같은 계정으로 다른 기기에서 열면 이어서 볼 수 있어요.")
+  );
+  function resetStep(){
+    resetBox.innerHTML = "";
+    resetBox.append(h("button", {class:"btn block", onclick:() => {
+      resetBox.innerHTML = "";
+      resetBox.append(h("p", {class:"small"}, "모든 학습 기록과 별이 지워져요. 정말 지울까요?"),
+        h("div", {class:"grid2"}, h("button", {class:"btn", onclick:resetStep}, "취소"),
+          h("button", {class:"btn primary", onclick:() => { const pin = S.settings.pin; S = freshState(); S.settings.pin = pin; save(); parentOk = false; route("home"); }}, "모두 지우기")));
+    }}, "학습 기록 모두 지우기"));
+  }
+  resetStep();
+}
+function pinPad(){
+  const setting = !S.settings.pin;
+  let entry = "", first = "";
+  const dots = h("div", {class:"pinbox", "aria-label":"PIN"});
+  const msg = h("p", {class:"small muted", style:"text-align:center;min-height:1.5em"}, setting ? "부모님이 쓸 숫자 4자리를 정해 주세요" : "부모님 PIN 4자리");
+  function paint(){ dots.innerHTML = ""; for (let k = 0; k < 4; k++) dots.append(h("span", {class:k < entry.length ? "f" : ""})); }
+  function press(d){
+    if (d === "←"){ entry = entry.slice(0, -1); return paint(); }
+    if (entry.length >= 4) return;
+    entry += d; paint();
+    if (entry.length < 4) return;
+    setTimeout(() => {
+      if (setting && !first){ first = entry; entry = ""; msg.textContent = "한 번 더 눌러 주세요"; return paint(); }
+      if (setting){ if (entry === first){ S.settings.pin = entry; save(); parentOk = true; route("parent"); } else { first = ""; entry = ""; msg.textContent = "두 번이 달라요. 처음부터 다시 정해 주세요"; paint(); } return; }
+      if (entry === S.settings.pin){ parentOk = true; route("parent"); } else { entry = ""; msg.textContent = "PIN이 달라요"; paint(); }
+    }, 120);
+  }
+  app.append(
+    h("div", {class:"topbar"}, h("button", {class:"close", "aria-label":"홈으로", onclick:() => route("home")}, "‹"), h("h2", null, "부모님 화면")),
+    h("section", {class:"sheet col"}, msg, dots,
+      h("div", {class:"keypad"}, ["1","2","3","4","5","6","7","8","9","","0","←"].map(d => d ? h("button", {onclick:() => press(d), "aria-label":d === "←" ? "지우기" : d}, d) : h("span")))));
+  paint();
+}
+
+/* ───────── 시작 ───────── */
+route("home");
+initSync();
+</script>
+
+</body>
+</html>
